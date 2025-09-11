@@ -9,5 +9,17 @@ export const silkscreenTextProps = pcbLayoutProps.extend({
   font: z.enum(["tscircuit2024"]).optional(),
   fontSize: length.optional(),
   layers: z.array(layer_ref).optional(),
+  /**
+   * If true, text will knock out underlying silkscreen
+   */
+  isKnockout: z.boolean().optional(),
+  knockoutPadding: z
+    .object({
+      left: length,
+      top: length,
+      bottom: length,
+      right: length,
+    })
+    .optional(),
 })
 export type SilkscreenTextProps = z.input<typeof silkscreenTextProps>

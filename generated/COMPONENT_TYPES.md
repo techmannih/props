@@ -704,53 +704,20 @@ export const pcbSameXConstraintProps = z.object({
 ### copper-pour
 
 ```typescript
-export interface RectCopperPourProps
-  extends Omit<PcbLayoutProps, "pcbRotation"> {
-  shape: "rect"
-  width: Distance
-  height: Distance
-  connectsTo?: string | string[]
+export interface CopperPourProps {
+  name?: string
+  layer: LayerRefInput
+  connectsTo: string
+  padMargin?: Distance
+  traceMargin?: Distance
 }
-export const rectCopperPourProps = pcbLayoutProps
-  .omit({
-    pcbRotation: true,
-  })
-  .extend({
-    shape: z.literal("rect"),
-    width: distance,
-    height: distance,
-    connectsTo: z.string().or(z.array(z.string())).optional(),
-  })
-export interface CircleCopperPourProps
-  extends Omit<PcbLayoutProps, "pcbRotation"> {
-  shape: "circle"
-  radius: Distance
-  connectsTo?: string | string[]
-}
-export const circleCopperPourProps = pcbLayoutProps
-  .omit({
-    pcbRotation: true,
-  })
-  .extend({
-    shape: z.literal("circle"),
-    radius: distance,
-    connectsTo: z.string().or(z.array(z.string())).optional(),
-  })
-export interface PolygonCopperPourProps
-  extends Omit<PcbLayoutProps, "pcbRotation"> {
-  shape: "polygon"
-  points: Point[]
-  connectsTo?: string | string[]
-}
-export const polygonCopperPourProps = pcbLayoutProps
-  .omit({
-    pcbRotation: true,
-  })
-  .extend({
-    shape: z.literal("polygon"),
-    points: z.array(point),
-    connectsTo: z.string().or(z.array(z.string())).optional(),
-  })
+export const copperPourProps = z.object({
+  name: z.string().optional(),
+  layer: layer_ref,
+  connectsTo: z.string(),
+  padMargin: distance.optional(),
+  traceMargin: distance.optional(),
+})
 ```
 
 ### crystal
@@ -1702,6 +1669,8 @@ export interface CircularHoleWithRectPlatedProps
   holeShape?: "circle"
   padShape?: "rect"
   portHints?: PortHints
+  pcbHoleOffsetX?: number | string
+  pcbHoleOffsetY?: number | string
 }
 export interface PillWithRectPadPlatedHoleProps
   extends Omit<PcbLayoutProps, "pcbRotation" | "layer"> {
@@ -1772,6 +1741,8 @@ pcbLayoutProps.omit({ pcbRotation: true, layer: true }).extend({
       holeShape: z.literal("circle").optional(),
       padShape: z.literal("rect").optional(),
       portHints: portHints.optional(),
+      pcbHoleOffsetX: distance.optional(),
+      pcbHoleOffsetY: distance.optional(),
     }),
 pcbLayoutProps.omit({ pcbRotation: true, layer: true }).extend({
       name: z.string().optional(),
@@ -2047,6 +2018,15 @@ export const silkscreenTextProps = pcbLayoutProps.extend({
   font: z.enum(["tscircuit2024"]).optional(),
   fontSize: length.optional(),
   layers: z.array(layer_ref).optional(),
+  isKnockout: z.boolean().optional(),
+  knockoutPadding: z
+    .object({
+      left: length,
+      top: length,
+      bottom: length,
+      right: length,
+    })
+    .optional(),
 })
 ```
 
